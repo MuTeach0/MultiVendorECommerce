@@ -1,0 +1,573 @@
+{
+  "version": "1.0.0",
+  "darkMode": true,
+  "gridEnabling": true,
+  "detailLevel": "All",
+  "tablePositions": [
+    {
+      "name": "users",
+      "schemaName": "public",
+      "x": 220.8557240065259,
+      "y": 666.7315734346928
+    },
+    {
+      "name": "sellers",
+      "schemaName": "public",
+      "x": 483.81049599062715,
+      "y": 821.972526684922
+    },
+    {
+      "name": "customers",
+      "schemaName": "public",
+      "x": 509.92884533046856,
+      "y": 568.1616457781797
+    },
+    {
+      "name": "customer_addresses",
+      "schemaName": "public",
+      "x": 715.4821532289486,
+      "y": 620.4143547475029
+    },
+    {
+      "name": "categories",
+      "schemaName": "public",
+      "x": 217.65650525652586,
+      "y": 187.96411313124264
+    },
+    {
+      "name": "brands",
+      "schemaName": "public",
+      "x": 775.0808093831023,
+      "y": 215.1544025667552
+    },
+    {
+      "name": "products",
+      "schemaName": "public",
+      "x": 520.9067964210539,
+      "y": 135.15862455131503
+    },
+    {
+      "name": "product_media",
+      "schemaName": "public",
+      "x": 533.2630950356956,
+      "y": -85.70808280472818
+    },
+    {
+      "name": "seller_offers",
+      "schemaName": "public",
+      "x": 217.65650525652586,
+      "y": 1159.9725266849218
+    },
+    {
+      "name": "pricing_variations",
+      "schemaName": "public",
+      "x": 217.65650525652586,
+      "y": 1529.9725266849218
+    },
+    {
+      "name": "pricing_quantity_tiers",
+      "schemaName": "public",
+      "x": 496.29078260027586,
+      "y": 1529.9725266849218
+    },
+    {
+      "name": "price_audit_logs",
+      "schemaName": "public",
+      "x": 217.65650525652586,
+      "y": 1771.9725266849218
+    },
+    {
+      "name": "inventory_logs",
+      "schemaName": "public",
+      "x": 758.6941029127759,
+      "y": 1529.9725266849218
+    },
+    {
+      "name": "orders",
+      "schemaName": "public",
+      "x": 494.16431775652586,
+      "y": 1771.9725266849218
+    },
+    {
+      "name": "order_items",
+      "schemaName": "public",
+      "x": 805.9333607252759,
+      "y": 1771.9725266849218
+    },
+    {
+      "name": "return_requests",
+      "schemaName": "public",
+      "x": 1068.7365833815259,
+      "y": 1771.9725266849218
+    },
+    {
+      "name": "customer_wallets",
+      "schemaName": "public",
+      "x": 217.65650525652586,
+      "y": 2077.972526684922
+    },
+    {
+      "name": "seller_wallets",
+      "schemaName": "public",
+      "x": 494.16431775652586,
+      "y": 2013.9725266849218
+    },
+    {
+      "name": "wallet_transactions",
+      "schemaName": "public",
+      "x": 217.65650525652586,
+      "y": 2803.972526684922
+    },
+    {
+      "name": "marketing_campaigns",
+      "schemaName": "public",
+      "x": 805.9333607252759,
+      "y": 2013.9725266849218
+    },
+    {
+      "name": "campaign_participants",
+      "schemaName": "public",
+      "x": 1068.7365833815259,
+      "y": 2013.9725266849218
+    },
+    {
+      "name": "promo_codes",
+      "schemaName": "public",
+      "x": 217.65650525652586,
+      "y": 2255.972526684922
+    },
+    {
+      "name": "shipping_methods",
+      "schemaName": "public",
+      "x": 494.16431775652586,
+      "y": 2191.972526684922
+    },
+    {
+      "name": "shipping_zones",
+      "schemaName": "public",
+      "x": 805.9333607252759,
+      "y": 2255.972526684922
+    },
+    {
+      "name": "shipping_rates",
+      "schemaName": "public",
+      "x": 1068.7365833815259,
+      "y": 2223.972526684922
+    },
+    {
+      "name": "shipments",
+      "schemaName": "public",
+      "x": 217.65650525652586,
+      "y": 2561.972526684922
+    }
+  ],
+  "tableGroupCollapseStates": [],
+  "stickyNoteLayouts": [],
+  "referencePaths": [
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "users",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "user_id"
+      ],
+      "secondTableName": "sellers",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "users",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "user_id"
+      ],
+      "secondTableName": "customers",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "customers",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "customer_id"
+      ],
+      "secondTableName": "customer_addresses",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "categories",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "parent_id"
+      ],
+      "secondTableName": "categories",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "categories",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "category_id"
+      ],
+      "secondTableName": "products",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "brands",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "brand_id"
+      ],
+      "secondTableName": "products",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "products",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "product_id"
+      ],
+      "secondTableName": "product_media",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "sellers",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "seller_id"
+      ],
+      "secondTableName": "seller_offers",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "products",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "product_id"
+      ],
+      "secondTableName": "seller_offers",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "seller_offers",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "offer_id"
+      ],
+      "secondTableName": "pricing_variations",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "seller_offers",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "offer_id"
+      ],
+      "secondTableName": "pricing_quantity_tiers",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "seller_offers",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "offer_id"
+      ],
+      "secondTableName": "price_audit_logs",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "users",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "changed_by"
+      ],
+      "secondTableName": "price_audit_logs",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "seller_offers",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "offer_id"
+      ],
+      "secondTableName": "inventory_logs",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "customers",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "customer_id"
+      ],
+      "secondTableName": "orders",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "orders",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "order_id"
+      ],
+      "secondTableName": "order_items",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "seller_offers",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "offer_id"
+      ],
+      "secondTableName": "order_items",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "order_items",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "order_item_id"
+      ],
+      "secondTableName": "return_requests",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "customers",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "customer_id"
+      ],
+      "secondTableName": "customer_wallets",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "sellers",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "seller_id"
+      ],
+      "secondTableName": "seller_wallets",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "users",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "user_id"
+      ],
+      "secondTableName": "wallet_transactions",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "marketing_campaigns",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "campaign_id"
+      ],
+      "secondTableName": "campaign_participants",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "seller_offers",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "offer_id"
+      ],
+      "secondTableName": "campaign_participants",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "shipping_methods",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "shipping_method_id"
+      ],
+      "secondTableName": "shipping_rates",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "shipping_zones",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "zone_id"
+      ],
+      "secondTableName": "shipping_rates",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "orders",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "order_id"
+      ],
+      "secondTableName": "shipments",
+      "secondSchemaName": "public",
+      "secondRelation": "1",
+      "checkPoints": []
+    },
+    {
+      "firstFieldNames": [
+        "id"
+      ],
+      "firstTableName": "shipping_methods",
+      "firstSchemaName": "public",
+      "firstRelation": "1",
+      "secondFieldNames": [
+        "shipping_method_id"
+      ],
+      "secondTableName": "shipments",
+      "secondSchemaName": "public",
+      "secondRelation": "*",
+      "checkPoints": []
+    }
+  ]
+}

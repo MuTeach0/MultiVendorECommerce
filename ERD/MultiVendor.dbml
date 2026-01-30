@@ -1,0 +1,249 @@
+// --- 1. User Management Context ---
+TableGroup Users_Context {
+  users
+  sellers
+  customers
+  customer_addresses
+}
+
+Table users {
+  id int [pk, increment]
+  email varchar [unique]
+  password_hash varchar
+  role enum // admin, seller, customer, support
+  is_active bool
+  created_at timestamp
+}
+
+Table sellers {
+  id int [pk]
+  user_id int [ref: - users.id]
+  store_name varchar
+  is_verified bool
+  fulfillment_type enum // FBM, FBS
+  rating_score decimal
+}
+
+Table customers {
+  id int [pk]
+  user_id int [ref: - users.id]
+  full_name varchar
+  loyalty_tier enum 
+  points_balance int
+}
+
+Table customer_addresses {
+  id int [pk]
+  customer_id int [ref: > customers.id]
+  address_details text
+  is_default bool
+}
+
+// --- 2. Catalog & Products Context ---
+TableGroup Catalog_Context {
+  categories
+  brands
+  products
+  product_media
+}
+
+Table categories {
+  id int [pk]
+  parent_id int [ref: > categories.id, null]
+  name_ar varchar
+  pricing_logic_config json 
+}
+
+Table brands {
+  id int [pk]
+  name varchar
+}
+
+Table products {
+  id int [pk]
+  category_id int [ref: > categories.id]
+  brand_id int [ref: > brands.id]
+  master_sku varchar [unique]
+  title_ar varchar
+  pricing_type int // 1=Fixed, 2=Attribute, 3=Quantity, 4=Hybrid (int cause enum may limit future expansion)
+}
+// Product Media for images/videos associated with products
+Table product_media {
+  id int [pk]
+  product_id int [ref: > products.id]
+  url varchar
+  is_primary bool
+}
+
+// --- 3. Marketplace & Pricing Context ---
+TableGroup Marketplace_Context {
+  seller_offers // the main table linking sellers to products
+  pricing_variations // for attribute-based pricing
+  pricing_quantity_tiers // for quantity-based pricing B2B
+  inventory_logs // track stock changes
+  price_audit_logs // track price changes
+}
+// Seller Offers represent the products listed by sellers with their pricing and stock info
+Table seller_offers {
+  id int [pk]
+  seller_id int [ref: > sellers.id]
+  product_id int [ref: > products.id]
+  base_price decimal
+  stock_quantity int
+  buy_box_score decimal [note: "The score determining Buy Box eligibility"]
+  is_buy_box_winner bool [note: "Indicates if this offer currently holds the Buy Box"]
+  buy_box_updated_at timestamp [note: "Timestamp of the last Buy Box evaluation"]
+}
+// Pricing Variations for attribute-based pricing (e.g., size, color)
+Table pricing_variations {
+  id int [pk]
+  offer_id int [ref: > seller_offers.id]
+  sku_variant varchar [unique]
+  attributes json
+  price_adjustment decimal
+}
+// Pricing Quantity Tiers for volume discounts (B2B scenarios)
+Table pricing_quantity_tiers {
+  id int [pk]
+  offer_id int [ref: > seller_offers.id]
+  min_quantity int
+  discount_value decimal
+}
+// Price Audit Logs to track historical price changes
+Table price_audit_logs {
+  id int [pk]
+  offer_id int [ref: > seller_offers.id]
+  old_price decimal
+  new_price decimal
+  change_reason varchar
+  changed_by int [ref: > users.id]
+  created_at timestamp
+}
+// Inventory Logs to track stock changes
+Table inventory_logs {
+  id int [pk]
+  offer_id int [ref: > seller_offers.id]
+  change_qty int
+  reason varchar
+}
+
+// --- 4. Orders, Returns & Financials ---
+TableGroup Sales_Context {
+  orders // main orders table
+  order_items // items within each order
+  return_requests // return/refund requests
+  customer_wallets // customer wallet for store credits
+  seller_wallets // seller wallet for earnings
+}
+// Orders represent customer purchases
+Table orders {
+  id int [pk]
+  customer_id int [ref: > customers.id]
+  total_amount decimal
+  order_status enum 
+  created_at timestamp
+}
+// Order Items represent individual products within an order
+Table order_items {
+  id int [pk]
+  order_id int [ref: > orders.id]
+  offer_id int [ref: > seller_offers.id]
+  unit_price decimal 
+  quantity int
+}
+// Return Requests for handling returns and refunds
+Table return_requests {
+  id int [pk]
+  order_item_id int [ref: > order_items.id]
+  reason enum // damaged, not_as_described, change_of_mind
+  status enum // pending, approved, rejected, refunded
+  created_at timestamp
+}
+// Customer Wallets for store credits and refunds
+Table customer_wallets {
+  id int [pk]
+  customer_id int [ref: - customers.id]
+  balance decimal
+}
+// Seller Wallets for tracking seller earnings and withdrawals
+Table seller_wallets {
+  id int [pk]
+  seller_id int [ref: - sellers.id]
+  balance_withdrawable decimal
+}
+// Wallet Transactions for both customers and sellers
+Table wallet_transactions {
+  id int [pk]
+  user_id int [ref: > users.id] // can be seller or customer
+  amount decimal // positive for credit, negative for debit
+  transaction_type enum // deposit, withdrawal, refund, commission_deduction, payout
+  // can be linked to order or return request for context
+  reference_id int [note: "ID of related order or return request"]
+  description varchar // description of the transaction (e.g., "Refund for Order #1234")
+  created_at timestamp
+}
+
+// --- 5. Marketing & Support ---
+TableGroup Marketing_Context {
+  marketing_campaigns // promotional campaigns (Seller, Platform, Co-Funded)
+  campaign_participants // offers participating in campaigns (with possible discount overrides)
+  promo_codes // promo codes applicable to categories, brands, or vendors
+}
+// Marketing Campaigns for promotions
+Table marketing_campaigns {
+  id int [pk]
+  name varchar
+  funding_mode enum // seller, platform, co_funded
+  start_date timestamp
+  end_date timestamp
+}
+// Campaign Participants linking offers to campaigns
+Table campaign_participants {
+  id int [pk]
+  campaign_id int [ref: > marketing_campaigns.id]
+  offer_id int [ref: > seller_offers.id]
+  discount_override decimal
+}
+// Promo Codes applicable to categories, brands, or vendors
+Table promo_codes {
+  id int [pk]
+  code varchar [unique]
+  type enum // percentage, fixed
+  apply_to enum // category, brand, vendor, global
+  target_id int // ID of category or brand or seller
+  min_order_value decimal
+  is_active bool
+}
+
+// --- 6. Shipping & Logistics ---
+TableGroup Logistics_Context {
+  shipping_methods // e.g., Standard, Express(1day, 2day)
+  shipping_zones // e.g., Domestic, International
+  shipping_rates // rates based on method and zone
+  shipments // tracking shipments for orders
+}
+// Shipping Methods available for delivery(e.g., Standard, Express)
+Table shipping_methods {
+  id int [pk]
+  name varchar
+}
+// Shipping Zones defined for different regions(e.g., Domestic, International)
+Table shipping_zones {
+  id int [pk]
+  name varchar
+}
+// Shipping Rates based on method and zone (many-to-many)
+Table shipping_rates {
+  id int [pk]
+  shipping_method_id int [ref: > shipping_methods.id]
+  zone_id int [ref: > shipping_zones.id]
+  rate decimal
+}
+// Shipments tracking orders in transit (with tracking numbers)
+Table shipments {
+  id int [pk]
+  order_id int [ref: - orders.id]
+  shipping_method_id int [ref: > shipping_methods.id]
+  tracking_number varchar
+  shipment_status enum
+}
