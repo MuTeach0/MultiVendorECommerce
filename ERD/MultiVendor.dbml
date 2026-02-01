@@ -1,249 +1,357 @@
 // --- 1. User Management Context ---
-TableGroup Users_Context {
-  users
-  sellers
-  customers
-  customer_addresses
+TableGroup UsersContext { 
+  Users
+  Sellers
+  Customers
+  CustomerAddresses 
 }
 
-Table users {
-  id int [pk, increment]
-  email varchar [unique]
-  password_hash varchar
-  role enum // admin, seller, customer, support
-  is_active bool
-  created_at timestamp
+// Identity and Authentication management
+Table Users {
+  Id guid [pk] 
+  Email varchar [unique]
+  PasswordHash varchar
+  Role enum // Defines permissions (Admin, Seller, Customer)
+  IsActive bool
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
 
-Table sellers {
-  id int [pk]
-  user_id int [ref: - users.id]
-  store_name varchar
-  is_verified bool
-  fulfillment_type enum // FBM, FBS
-  rating_score decimal
+// Business details for vendors selling on the platform
+Table Sellers {
+  Id guid [pk] 
+  UserId guid [ref: - Users.Id] // Links profile to login credentials
+  StoreName varchar
+  IsVerified bool
+  FulfillmentType enum // Shipping via Seller (FBM) or Platform (FBS)
+  RatingScore decimal
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
 
-Table customers {
-  id int [pk]
-  user_id int [ref: - users.id]
-  full_name varchar
-  loyalty_tier enum 
-  points_balance int
+// Profile and loyalty data for shoppers
+Table Customers {
+  Id guid [pk]
+  UserId guid [ref: - Users.Id]
+  FullName varchar
+  LoyaltyTier enum 
+  PointsBalance int
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
 
-Table customer_addresses {
-  id int [pk]
-  customer_id int [ref: > customers.id]
-  address_details text
-  is_default bool
+// Shipping locations for customer orders
+Table CustomerAddresses {
+  Id guid [pk]
+  CustomerId guid [ref: > Customers.Id]
+  AddressDetails text
+  IsDefault bool // Primary address for checkout
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
 
 // --- 2. Catalog & Products Context ---
-TableGroup Catalog_Context {
-  categories
-  brands
-  products
-  product_media
+TableGroup CatalogContext { 
+  Categories
+  Brands
+  Products
+  ProductMedia 
 }
 
-Table categories {
-  id int [pk]
-  parent_id int [ref: > categories.id, null]
-  name_ar varchar
-  pricing_logic_config json 
+// Product hierarchy and category-specific business rules
+Table Categories {
+  Id guid [pk]
+  ParentId guid [ref: > Categories.Id, null] // Supports nested sub-categories
+  NameAr varchar
+  PricingLogicConfig json // Storage for fee percentages or commission rules
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
 
-Table brands {
-  id int [pk]
-  name varchar
+Table Brands {
+  Id guid [pk]
+  Name varchar
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
 
-Table products {
-  id int [pk]
-  category_id int [ref: > categories.id]
-  brand_id int [ref: > brands.id]
-  master_sku varchar [unique]
-  title_ar varchar
-  pricing_type int // 1=Fixed, 2=Attribute, 3=Quantity, 4=Hybrid (int cause enum may limit future expansion)
+// The "Master" product template shared by all sellers
+Table Products {
+  Id guid [pk]
+  CategoryId guid [ref: > Categories.Id]
+  BrandId guid [ref: > Brands.Id]
+  MasterSku varchar [unique]
+  TitleAr varchar
+  PricingType int // Logic selector: 1=Fixed, 2=Attribute, 3=Quantity, 4=Hybrid
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
-// Product Media for images/videos associated with products
-Table product_media {
-  id int [pk]
-  product_id int [ref: > products.id]
-  url varchar
-  is_primary bool
+
+Table ProductMedia {
+  Id guid [pk]
+  ProductId guid [ref: > Products.Id]
+  Url varchar
+  IsPrimary bool // Main image for search results
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
 
 // --- 3. Marketplace & Pricing Context ---
-TableGroup Marketplace_Context {
-  seller_offers // the main table linking sellers to products
-  pricing_variations // for attribute-based pricing
-  pricing_quantity_tiers // for quantity-based pricing B2B
-  inventory_logs // track stock changes
-  price_audit_logs // track price changes
+TableGroup MarketplaceContext { 
+  SellerOffers
+  PricingVariations
+  PricingQuantityTiers
+  InventoryLogs
+  PriceAuditLogs 
 }
-// Seller Offers represent the products listed by sellers with their pricing and stock info
-Table seller_offers {
-  id int [pk]
-  seller_id int [ref: > sellers.id]
-  product_id int [ref: > products.id]
-  base_price decimal
-  stock_quantity int
-  buy_box_score decimal [note: "The score determining Buy Box eligibility"]
-  is_buy_box_winner bool [note: "Indicates if this offer currently holds the Buy Box"]
-  buy_box_updated_at timestamp [note: "Timestamp of the last Buy Box evaluation"]
+
+// Links sellers to products with specific prices and stock
+Table SellerOffers {
+  Id guid [pk]
+  SellerId guid [ref: > Sellers.Id]
+  ProductId guid [ref: > Products.Id]
+  BasePrice decimal
+  StockQuantity int
+  BuyBoxScore decimal // Algorithmic rank for winning the main "Buy" button
+  IsBuyBoxWinner bool
+  BuyBoxUpdatedAt timestamp
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
-// Pricing Variations for attribute-based pricing (e.g., size, color)
-Table pricing_variations {
-  id int [pk]
-  offer_id int [ref: > seller_offers.id]
-  sku_variant varchar [unique]
-  attributes json
-  price_adjustment decimal
+
+// Adjusts price based on attributes (e.g., +$10 for Size XL)
+Table PricingVariations {
+  Id guid [pk]
+  OfferId guid [ref: > SellerOffers.Id]
+  SkuVariant varchar [unique]
+  Attributes json // { "Color": "Blue", "Size": "M" }
+  PriceAdjustment decimal
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
-// Pricing Quantity Tiers for volume discounts (B2B scenarios)
-Table pricing_quantity_tiers {
-  id int [pk]
-  offer_id int [ref: > seller_offers.id]
-  min_quantity int
-  discount_value decimal
+
+// Supports B2B bulk discounts (e.g., buy 10+ items for 5% off)
+Table PricingQuantityTiers {
+  Id guid [pk]
+  OfferId guid [ref: > SellerOffers.Id]
+  MinQuantity int
+  DiscountValue decimal
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
-// Price Audit Logs to track historical price changes
-Table price_audit_logs {
-  id int [pk]
-  offer_id int [ref: > seller_offers.id]
-  old_price decimal
-  new_price decimal
-  change_reason varchar
-  changed_by int [ref: > users.id]
-  created_at timestamp
+
+// Financial history of price fluctuations
+Table PriceAuditLogs {
+  Id guid [pk]
+  OfferId guid [ref: > SellerOffers.Id]
+  OldPrice decimal
+  NewPrice decimal
+  ChangeReason varchar
+  ChangedBy guid [ref: > Users.Id]
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
-// Inventory Logs to track stock changes
-Table inventory_logs {
-  id int [pk]
-  offer_id int [ref: > seller_offers.id]
-  change_qty int
-  reason varchar
+
+// Logs for stock movement (Incoming/Outgoing/Damaged)
+Table InventoryLogs {
+  Id guid [pk]
+  OfferId guid [ref: > SellerOffers.Id]
+  ChangeQty int
+  Reason varchar
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
 
 // --- 4. Orders, Returns & Financials ---
-TableGroup Sales_Context {
-  orders // main orders table
-  order_items // items within each order
-  return_requests // return/refund requests
-  customer_wallets // customer wallet for store credits
-  seller_wallets // seller wallet for earnings
-}
-// Orders represent customer purchases
-Table orders {
-  id int [pk]
-  customer_id int [ref: > customers.id]
-  total_amount decimal
-  order_status enum 
-  created_at timestamp
-}
-// Order Items represent individual products within an order
-Table order_items {
-  id int [pk]
-  order_id int [ref: > orders.id]
-  offer_id int [ref: > seller_offers.id]
-  unit_price decimal 
-  quantity int
-}
-// Return Requests for handling returns and refunds
-Table return_requests {
-  id int [pk]
-  order_item_id int [ref: > order_items.id]
-  reason enum // damaged, not_as_described, change_of_mind
-  status enum // pending, approved, rejected, refunded
-  created_at timestamp
-}
-// Customer Wallets for store credits and refunds
-Table customer_wallets {
-  id int [pk]
-  customer_id int [ref: - customers.id]
-  balance decimal
-}
-// Seller Wallets for tracking seller earnings and withdrawals
-Table seller_wallets {
-  id int [pk]
-  seller_id int [ref: - sellers.id]
-  balance_withdrawable decimal
-}
-// Wallet Transactions for both customers and sellers
-Table wallet_transactions {
-  id int [pk]
-  user_id int [ref: > users.id] // can be seller or customer
-  amount decimal // positive for credit, negative for debit
-  transaction_type enum // deposit, withdrawal, refund, commission_deduction, payout
-  // can be linked to order or return request for context
-  reference_id int [note: "ID of related order or return request"]
-  description varchar // description of the transaction (e.g., "Refund for Order #1234")
-  created_at timestamp
+TableGroup SalesContext { 
+  Orders
+  OrderItems
+  ReturnRequests
+  CustomerWallets
+  SellerWallets
+  WalletTransactions 
 }
 
-// --- 5. Marketing & Support ---
-TableGroup Marketing_Context {
-  marketing_campaigns // promotional campaigns (Seller, Platform, Co-Funded)
-  campaign_participants // offers participating in campaigns (with possible discount overrides)
-  promo_codes // promo codes applicable to categories, brands, or vendors
-}
-// Marketing Campaigns for promotions
-Table marketing_campaigns {
-  id int [pk]
-  name varchar
-  funding_mode enum // seller, platform, co_funded
-  start_date timestamp
-  end_date timestamp
-}
-// Campaign Participants linking offers to campaigns
-Table campaign_participants {
-  id int [pk]
-  campaign_id int [ref: > marketing_campaigns.id]
-  offer_id int [ref: > seller_offers.id]
-  discount_override decimal
-}
-// Promo Codes applicable to categories, brands, or vendors
-Table promo_codes {
-  id int [pk]
-  code varchar [unique]
-  type enum // percentage, fixed
-  apply_to enum // category, brand, vendor, global
-  target_id int // ID of category or brand or seller
-  min_order_value decimal
-  is_active bool
+// High-level order status and totals
+Table Orders {
+  Id guid [pk]
+  CustomerId guid [ref: > Customers.Id]
+  TotalAmount decimal
+  OrderStatus enum // Pending, Processing, Shipped, Delivered, Canceled
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
 
-// --- 6. Shipping & Logistics ---
-TableGroup Logistics_Context {
-  shipping_methods // e.g., Standard, Express(1day, 2day)
-  shipping_zones // e.g., Domestic, International
-  shipping_rates // rates based on method and zone
-  shipments // tracking shipments for orders
+// Detailed snapshot of items purchased (includes price at time of sale)
+Table OrderItems {
+  Id guid [pk]
+  OrderId guid [ref: > Orders.Id]
+  OfferId guid [ref: > SellerOffers.Id]
+  UnitPrice decimal 
+  Quantity int
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
-// Shipping Methods available for delivery(e.g., Standard, Express)
-Table shipping_methods {
-  id int [pk]
-  name varchar
+
+// Table to manage product returns and refund status
+Table ReturnRequests {
+  Id guid [pk] // BaseEntity
+  OrderItemId guid [ref: > OrderItems.Id] // Links to the specific purchased item
+  Reason enum // e.g., Damaged, WrongItem, NoLongerNeeded
+  Status enum // e.g., Pending, Approved, Rejected, Refunded
+  RefundAmount decimal // The actual amount to be returned to the customer
+  SellerActionNote text // Feedback from the seller regarding the return
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
-// Shipping Zones defined for different regions(e.g., Domestic, International)
-Table shipping_zones {
-  id int [pk]
-  name varchar
+
+// Manages customer refunds and store credits
+Table CustomerWallets {
+  Id guid [pk]
+  CustomerId guid [ref: - Customers.Id]
+  Balance decimal
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
-// Shipping Rates based on method and zone (many-to-many)
-Table shipping_rates {
-  id int [pk]
-  shipping_method_id int [ref: > shipping_methods.id]
-  zone_id int [ref: > shipping_zones.id]
-  rate decimal
+
+// Manages seller earnings and pending payouts
+Table SellerWallets {
+  Id guid [pk]
+  SellerId guid [ref: - Sellers.Id]
+  BalanceWithdrawable decimal
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
-// Shipments tracking orders in transit (with tracking numbers)
-Table shipments {
-  id int [pk]
-  order_id int [ref: - orders.id]
-  shipping_method_id int [ref: > shipping_methods.id]
-  tracking_number varchar
-  shipment_status enum
+
+// Ledger tracking every cent moving in the system (Auditing)
+Table WalletTransactions {
+  Id guid [pk]
+  UserId guid [ref: > Users.Id]
+  Amount decimal 
+  TransactionType enum // Deposit, Withdrawal, Refund, Commission
+  ReferenceId guid // External link to OrderId or ReturnId
+  Description varchar
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
+}
+
+// --- 5. Marketing Context ---
+TableGroup MarketingContext { 
+  MarketingCampaigns
+  CampaignParticipants
+  PromoCodes 
+}
+
+// Flash sales or seasonal events (e.g., Black Friday)
+Table MarketingCampaigns {
+  Id guid [pk]
+  Name varchar
+  FundingMode enum // Seller, Platform, or Co-Funded split
+  StartDate timestamp
+  EndDate timestamp
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
+}
+
+// Links specific seller offers to a campaign with price overrides
+Table CampaignParticipants {
+  Id guid [pk]
+  CampaignId guid [ref: > MarketingCampaigns.Id]
+  OfferId guid [ref: > SellerOffers.Id]
+  DiscountOverride decimal
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
+}
+
+/* PromoCodes Logic:
+  - C# Implementation: Use a [NotMapped] Calculated Property 'TargetType'
+  - Logic: 
+    If CategoryId != null -> "Category"
+    If BrandId != null -> "Brand"
+    If SellerId != null -> "Seller"
+    Else -> "Global"
+*/
+Table PromoCodes {
+  Id guid [pk]
+  Code varchar [unique]
+  Type enum // Fixed amount or Percentage
+  
+  // Targeted Discount Links (Null indicates a Global site-wide code)
+  CategoryId guid [ref: > Categories.Id, null]
+  BrandId guid [ref: > Brands.Id, null]
+  SellerId guid [ref: > Sellers.Id, null]
+  
+  MinOrderValue decimal
+  IsActive bool
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
+}
+
+// --- 6. Logistics Context ---
+TableGroup LogisticsContext {
+  ShippingMethods
+  ShippingZones
+  ShippingRates
+  Shipments 
+}
+
+Table ShippingMethods {
+  Id guid [pk]
+  Name varchar // Standard, Express, Next Day
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
+}
+
+Table ShippingZones {
+  Id guid [pk]
+  Name varchar // Domestic, International, Specific Region
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
+}
+
+// Matrix for pricing: (Method + Zone = Price)
+Table ShippingRates {
+  Id guid [pk]
+  ShippingMethodId guid [ref: > ShippingMethods.Id]
+  ZoneId guid [ref: > ShippingZones.Id]
+  Rate decimal
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
+}
+
+// Tracking individual order delivery progress
+Table Shipments {
+  Id guid [pk]
+  OrderId guid [ref: - Orders.Id]
+  ShippingMethodId guid [ref: > ShippingMethods.Id]
+  TrackingNumber varchar
+  ShipmentStatus enum // InTransit, OutForDelivery, Delivered
+  CreatedAt timestamp
+  UpdatedAt timestamp
+  IsDeleted bool [default: false]
 }
