@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/MultiVendor.API/MultiVendor.API.csproj" />
+    <Project Path="src/MultiVendor.Application/MultiVendor.Application.csproj" />
+    <Project Path="src/MultiVendor.Domain/MultiVendor.Domain.csproj" />
+    <Project Path="src/MultiVendor.Infrastructure/MultiVendor.Infrastructure.csproj" />
+  </Folder>
+</Solution>
