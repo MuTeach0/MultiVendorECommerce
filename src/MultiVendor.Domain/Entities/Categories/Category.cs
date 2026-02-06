@@ -17,6 +17,7 @@ public sealed class Category : AuditableEntity, IAggregateRoot
         NameAr = nameAr;
         ParentId = parentId;
         PricingLogicConfig = pricingConfig;
+        IsActive = true;
     }
 
     public static Result<Category> Create(string nameAr, Guid? parentId = null, string? pricingConfig = null)

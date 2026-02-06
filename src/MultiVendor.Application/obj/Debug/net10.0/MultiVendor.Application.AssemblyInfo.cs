@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MultiVendor.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+36734d18c396382b9f3af1b8115a9568fd59b9e6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+648e98e9ef0006ee0d1753e0701c883d0ba93e3c")]
 [assembly: System.Reflection.AssemblyProductAttribute("MultiVendor.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MultiVendor.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

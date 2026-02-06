@@ -9,4 +9,6 @@ public static class GeneralErrors
     public static Error NotFound => Error.NotFound("General.NotFound", GeneralMessages.ResourceNotFound);
     public static Error Unauthorized => Error.Unauthorized("General.Unauthorized", GeneralMessages.Unauthorized);
     public static Error Forbidden => Error.Forbidden("General.Forbidden", GeneralMessages.Forbidden);
+    public static Error InputTooLong(string fieldName, int maxLength) => 
+        Error.Validation("General.InputTooLong", $"{fieldName} cannot exceed {maxLength} characters.");
 }

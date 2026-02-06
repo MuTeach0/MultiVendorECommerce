@@ -70,6 +70,7 @@ Table Categories {
   PricingLogicConfig json // Storage for fee percentages or commission rules
   CreatedAt timestamp
   UpdatedAt timestamp
+  IsActive bool [default: true]
   IsDeleted bool [default: false]
 }
 
@@ -78,6 +79,7 @@ Table Brands {
   Name varchar
   CreatedAt timestamp
   UpdatedAt timestamp
+  IsActive bool [default: true]
   IsDeleted bool [default: false]
 }
 
@@ -88,9 +90,11 @@ Table Products {
   BrandId guid [ref: > Brands.Id]
   MasterSku varchar [unique]
   TitleAr varchar
-  PricingType int // Logic selector: 1=Fixed, 2=Attribute, 3=Quantity, 4=Hybrid
+  DescriptionAr text
+  PricingType enum // Logic selector: 1=Fixed, 2=Attribute, 3=Quantity, 4=Hybrid
   CreatedAt timestamp
   UpdatedAt timestamp
+  IsActive bool [default: true]
   IsDeleted bool [default: false]
 }
 
