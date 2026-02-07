@@ -1,9 +1,9 @@
 // --- 1. User Management Context ---
-TableGroup UsersContext { 
-  Users
-  Sellers
-  Customers
-  CustomerAddresses 
+TableGroup UsersContext {
+  Users // Done
+  Sellers // Done
+  Customers // Done
+  CustomerAddresses // Done
 }
 
 // Identity and Authentication management
@@ -56,10 +56,10 @@ Table CustomerAddresses {
 
 // --- 2. Catalog & Products Context ---
 TableGroup CatalogContext { 
-  Categories
-  Brands
-  Products
-  ProductMedia 
+  Categories // Done
+  Brands // Done
+  Products // Done
+  ProductMedia // Done
 }
 
 // Product hierarchy and category-specific business rules
@@ -110,11 +110,11 @@ Table ProductMedia {
 
 // --- 3. Marketplace & Pricing Context ---
 TableGroup MarketplaceContext { 
-  SellerOffers
-  PricingVariations
-  PricingQuantityTiers
-  InventoryLogs
-  PriceAuditLogs 
+  SellerOffers // Done
+  PricingVariations // Done
+  PricingQuantityTiers // Done
+  InventoryLogs // Done
+  PriceAuditLogs // Done
 }
 
 // Links sellers to products with specific prices and stock
